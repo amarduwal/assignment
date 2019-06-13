@@ -31,7 +31,8 @@
 
 # Using pry for debugging
 require 'pry'
-
+# To measure performance of code
+require 'benchmark'
 
 class  NumberConversion
   attr_reader :phone_number, :wordlist
@@ -138,4 +139,6 @@ end
 
 
 # Let's the method call from here
-NumberConversion.new(6686787825).possible_word_combinations
+puts Benchmark.measure {
+  NumberConversion.new(6686787825).possible_word_combinations
+}
