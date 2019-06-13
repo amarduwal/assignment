@@ -41,6 +41,8 @@ class  NumberConversion
     @wordlist = {} # Let's store evey wordlist
     # Mapping number to letters
     @number_to_letters_hash_mapping = { '2' => %w[a b c], '3' => %w[d e f], '4' => %w[g h i], '5' => %w[j k l], '6' => %w[m n o], '7' => %w[p q r s], '8' => %w[t u v], '9' => %w[w x y z] }
+    # To store relevant words
+    @relevant_words = []
   end
 
   def possible_word_combinations
@@ -75,7 +77,11 @@ class  NumberConversion
     matched_words_from_wordlist([@mapping_phone_number[0..2], @mapping_phone_number[3..6], @mapping_phone_number[7..9]])
 
     # Combination of [4,3,3]
-    matched_words_from_wordlist([@mapping_phone_number[0..3], @mapping_phone_number[4..6], @mapping_phone_number[7..9]])    
+    matched_words_from_wordlist([@mapping_phone_number[0..3], @mapping_phone_number[4..6], @mapping_phone_number[7..9]])
+    
+    # For size of 10
+    @relevant_words << (@mapping_phone_number.shift.product(*@mapping_phone_number).map(&:join) & @wordlist[10])  
+    return @relevant_words
   end
 
   def matched_words_from_wordlist(breakdown_phone_number)
@@ -85,8 +91,25 @@ class  NumberConversion
       # Combine words of [["m", "n", "o"], ["m", "n", "o"], ["t", "u", "v"]]
       # to produce every possible words
       # ["mmt", "mmu", "mmv", "mnt", "mnu", "mnv", "mot", "mou", "mov", "nmt", "nmu", "nmv", "nnt", "nnu", "nnv", "not", "nou", "nov", "omt", "omu", "omv", "ont", "onu", "onv", "oot", "oou", "oov"]
-      # binding.pry
+      char_length = combine_characters.length
+      combine_words = combine_characters.shift.product(*combine_characters).map(&:join)
+      # Intersection of combine words with @wordlist
+      matched_words << (combine_words & @wordlist[char_length])
     end
+
+      # Check for relevant matched_words
+      return if matched_words.any?(&:empty?)
+
+      # Making combinations from above output
+      # Relevant combination from the list of matched_words
+      # Append every possible combination of words in @relevant_words
+      # Combination of (3+7, 4+6, 5+5, 6+4, 7+3, 3+3+4, 3+4+3, 4+3+3)
+      if matched_words.size == 2
+        @relevant_words << matched_words[0].product(matched_words[1])
+      elsif matched_words.size == 3
+        @relevant_words << matched_words[0].product(matched_words[1]).product(matched_words[2]).map(&:flatten)
+      end
+
   end
 
   def read_wordlist_file
@@ -97,7 +120,7 @@ class  NumberConversion
 
     File.foreach("dictionary.txt") do |word|
       word = word.chop.downcase
-      wordlist[word.length] = wordlist[word.length].nil? ? [word] : wordlist[word.length].push(word)
+      @wordlist[word.length] = @wordlist[word.length].nil? ? [word] : @wordlist[word.length].push(word)
     end
   end
 
@@ -106,4 +129,4 @@ end
 
 
 # Let's the method call from here
-NumberConversion.new(6686787825).possible_word_combinations
+print NumberConversion.new(6686787825).possible_word_combinations
