@@ -49,27 +49,41 @@ class  NumberConversion
     # Read wordlist file
     read_wordlist_file
     matching_words
+    @relevant_words.each { |x| puts x.join(", ") }
   end
 
   def matching_words
     # Mapping phone number with respective letters
-    # mapping_phone_number = [["m", "n", "o"], ["m", "n", "o"], ["t", "u", "v"], ["m", "n", "o"], ["p", "q", "r", "s"], ["t", "u", "v"], ["p", "q", "r", "s"], ["t", "u", "v"], ["a", "b", "c"], ["j", "k", "l"]]   
+    # mapping_phone_number = [["m", "n", "o"], ["m", "n", "o"], ["t", "u", "v"], ["m", "n", "o"], ["p", "q", "r", "s"], ["t", "u", "v"], ["p", "q", "r", "s"], ["t", "u", "v"], ["a", "b", "c"], ["j", "k", "l"]]
     @mapping_phone_number = phone_number.chars.map { |char| @number_to_letters_hash_mapping[char] }
 
+    # For 3+7, 4+6, 5+5, 6+4, 7+3 combination
+    breaking_into_two_part
+
+    # For 3+3+4, 3+4+3, 4+3+3 combination
+    breaking_into_three_part
+
+    # For size of 10
+    @relevant_words << (@mapping_phone_number.shift.product(*@mapping_phone_number).map(&:join) & @wordlist[10])    
+  end
+
+  def breaking_into_two_part
     # let's break mapping_phone_number into
     # 3+7, 4+6, 5+5, 6+4, 7+3
-    # Since word must be at least 3 character, [0..2]   
+    # Since word must be at least 3 character, [0..2]
     phone_number_length = phone_number.length
     i = 2
     while i < (phone_number_length - 3)
       breakdown_phone_number1 = @mapping_phone_number[0..i]
       breakdown_phone_number2 = @mapping_phone_number[(i + 1)..(phone_number_length - 1)]
-    
+
       # pass this array to compare with wordlist
       matched_words_from_wordlist([breakdown_phone_number1, breakdown_phone_number2])
       i += 1
     end
+  end
 
+  def breaking_into_three_part
     # Combination of [3,3,4]
     matched_words_from_wordlist([@mapping_phone_number[0..2], @mapping_phone_number[3..5], @mapping_phone_number[6..9]])
 
@@ -78,10 +92,6 @@ class  NumberConversion
 
     # Combination of [4,3,3]
     matched_words_from_wordlist([@mapping_phone_number[0..3], @mapping_phone_number[4..6], @mapping_phone_number[7..9]])
-    
-    # For size of 10
-    @relevant_words << (@mapping_phone_number.shift.product(*@mapping_phone_number).map(&:join) & @wordlist[10])  
-    return @relevant_words
   end
 
   def matched_words_from_wordlist(breakdown_phone_number)
@@ -97,18 +107,18 @@ class  NumberConversion
       matched_words << (combine_words & @wordlist[char_length])
     end
 
-      # Check for relevant matched_words
-      return if matched_words.any?(&:empty?)
+    # Check for relevant matched_words
+    return if matched_words.any?(&:empty?)
 
-      # Making combinations from above output
-      # Relevant combination from the list of matched_words
-      # Append every possible combination of words in @relevant_words
-      # Combination of (3+7, 4+6, 5+5, 6+4, 7+3, 3+3+4, 3+4+3, 4+3+3)
-      if matched_words.size == 2
-        @relevant_words << matched_words[0].product(matched_words[1])
-      elsif matched_words.size == 3
-        @relevant_words << matched_words[0].product(matched_words[1]).product(matched_words[2]).map(&:flatten)
-      end
+    # Making combinations from above output
+    # Relevant combination from the list of matched_words
+    # Append every possible combination of words in @relevant_words
+    # Combination of (3+7, 4+6, 5+5, 6+4, 7+3, 3+3+4, 3+4+3, 4+3+3)
+    if matched_words.size == 2
+      @relevant_words += matched_words[0].product(matched_words[1])
+    elsif matched_words.size == 3
+      @relevant_words += matched_words[0].product(matched_words[1]).product(matched_words[2]).map(&:flatten)
+    end
 
   end
 
@@ -124,9 +134,8 @@ class  NumberConversion
     end
   end
 
-
 end
 
 
 # Let's the method call from here
-print NumberConversion.new(6686787825).possible_word_combinations
+NumberConversion.new(6686787825).possible_word_combinations
