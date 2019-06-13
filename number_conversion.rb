@@ -47,10 +47,21 @@ class  NumberConversion
   end
 
   def possible_word_combinations
+    # Let's do some validation before proceeding
+    return "Invalid Input" if not_valid_number?
     # Read wordlist file
     read_wordlist_file
-    matching_words
-    @relevant_words.each { |x| puts x.join(", ") }
+    matching_words 
+    return @relevant_words.each { |x| puts x.join(", ") }
+  end
+
+  def not_valid_number?
+    # Let's check for 
+    # => Nil phone umber
+    # => Phone number length
+    # => Phone number contain 0 or 1
+    # => Phone number only contain digits
+    phone_number.nil? || !phone_number.length.eql?(10) || (phone_number.split('') & ['0','1']).any? || phone_number.scan(/\D/).any?
   end
 
   def matching_words
@@ -139,6 +150,8 @@ end
 
 
 # Let's the method call from here
+print "Input 10 digits phone number without 0 & 1 : "
+phone_number = gets.chomp
 puts Benchmark.measure {
-  NumberConversion.new(6686787825).possible_word_combinations
+  NumberConversion.new(phone_number).possible_word_combinations
 }
