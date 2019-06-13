@@ -27,6 +27,11 @@
 # => build a possible words from break down numbers
 # => compare with the wordlist
 
+# Assuming the phone_number : 6686787825
+
+# Using pry for debugging
+require 'pry'
+
 
 class  NumberConversion
   attr_reader :phone_number, :wordlist
@@ -41,6 +46,47 @@ class  NumberConversion
   def possible_word_combinations
     # Read wordlist file
     read_wordlist_file
+    matching_words
+  end
+
+  def matching_words
+    # Mapping phone number with respective letters
+    # mapping_phone_number = [["m", "n", "o"], ["m", "n", "o"], ["t", "u", "v"], ["m", "n", "o"], ["p", "q", "r", "s"], ["t", "u", "v"], ["p", "q", "r", "s"], ["t", "u", "v"], ["a", "b", "c"], ["j", "k", "l"]]   
+    @mapping_phone_number = phone_number.chars.map { |char| @number_to_letters_hash_mapping[char] }
+
+    # let's break mapping_phone_number into
+    # 3+7, 4+6, 5+5, 6+4, 7+3
+    # Since word must be at least 3 character, [0..2]   
+    phone_number_length = phone_number.length
+    i = 2
+    while i < (phone_number_length - 3)
+      breakdown_phone_number1 = @mapping_phone_number[0..i]
+      breakdown_phone_number2 = @mapping_phone_number[(i + 1)..(phone_number_length - 1)]
+    
+      # pass this array to compare with wordlist
+      matched_words_from_wordlist([breakdown_phone_number1, breakdown_phone_number2])
+      i += 1
+    end
+
+    # Combination of [3,3,4]
+    matched_words_from_wordlist([@mapping_phone_number[0..2], @mapping_phone_number[3..5], @mapping_phone_number[6..9]])
+
+    # Combination of [3,4,3]
+    matched_words_from_wordlist([@mapping_phone_number[0..2], @mapping_phone_number[3..6], @mapping_phone_number[7..9]])
+
+    # Combination of [4,3,3]
+    matched_words_from_wordlist([@mapping_phone_number[0..3], @mapping_phone_number[4..6], @mapping_phone_number[7..9]])    
+  end
+
+  def matched_words_from_wordlist(breakdown_phone_number)
+    matched_words = []
+    breakdown_phone_number.each do |combine_characters|
+      # combine characters to produce combine words
+      # Combine words of [["m", "n", "o"], ["m", "n", "o"], ["t", "u", "v"]]
+      # to produce every possible words
+      # ["mmt", "mmu", "mmv", "mnt", "mnu", "mnv", "mot", "mou", "mov", "nmt", "nmu", "nmv", "nnt", "nnu", "nnv", "not", "nou", "nov", "omt", "omu", "omv", "ont", "onu", "onv", "oot", "oou", "oov"]
+      # binding.pry
+    end
   end
 
   def read_wordlist_file
@@ -50,9 +96,9 @@ class  NumberConversion
     # wordlist = { 2=>["aa", "ab"....], 3=>["aah", "aal"...], ... }
 
     File.foreach("dictionary.txt") do |word|
-      word = word.chop.downcase      
+      word = word.chop.downcase
       wordlist[word.length] = wordlist[word.length].nil? ? [word] : wordlist[word.length].push(word)
-    end    
+    end
   end
 
 
