@@ -166,12 +166,22 @@ describe NumberConversion do
   phone_number2 = 2282668687
   output2 = [["act", "amounts"], ["act", "contour"], ["bat", "amounts"], ["bat", "contour"], ["cat", "amounts"], ["cat", "contour"], ["acta", "mounts"], ["act", "boo", "tots"], ["act", "boo", "tour"], ["act", "con", "tots"], ["act", "con", "tour"], ["act", "coo", "tots"], ["act", "coo", "tour"], ["bat", "boo", "tots"], ["bat", "boo", "tour"], ["bat", "con", "tots"], ["bat", "con", "tour"], ["bat", "coo", "tots"], ["bat", "coo", "tour"], ["cat", "boo", "tots"], ["cat", "boo", "tour"], ["cat", "con", "tots"], ["cat", "con", "tour"], ["cat", "coo", "tots"], ["cat", "coo", "tour"], ["act", "boot", "mus"], ["act", "boot", "nus"], ["act", "boot", "our"], ["act", "coot", "mus"], ["act", "coot", "nus"], ["act", "coot", "our"], ["bat", "boot", "mus"], ["bat", "boot", "nus"], ["bat", "boot", "our"], ["bat", "coot", "mus"], ["bat", "coot", "nus"], ["bat", "coot", "our"], ["cat", "boot", "mus"], ["cat", "boot", "nus"], ["cat", "boot", "our"], ["cat", "coot", "mus"], ["cat", "coot", "nus"], ["cat", "coot", "our"], ["acta", "mot", "mus"], ["acta", "mot", "nus"], ["acta", "mot", "our"], ["acta", "not", "mus"], ["acta", "not", "nus"], ["acta", "not", "our"], ["acta", "oot", "mus"], ["acta", "oot", "nus"], ["acta", "oot", "our"], ["catamounts"]]
   context "Number to possible words conversion" do
+    it 'Check if phone number is valid' do
+      object = NumberConversion.new(phone_number1)
+      expect(object.not_valid_number?).to be(false)
+    end
+
     it "Test combination of phone number with multiple words" do
       expect(NumberConversion.new(phone_number1).possible_word_combinations).to  match_array(output1)
     end
   end
 
   context "Number to possible words conversion" do
+    it 'Check if phone number is valid' do
+      object = NumberConversion.new(phone_number1)
+      expect(object.not_valid_number?).to be(false)
+    end
+
     it "Test combination of phone number with multiple words" do
       expect(NumberConversion.new(phone_number2).possible_word_combinations).to  match_array(output2)
     end
