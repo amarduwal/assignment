@@ -53,16 +53,12 @@ time ruby number_conversion.rb
 ```
 
 ## Instruction
-Successfully execute code on ruby 2.6.2. It requires 'pry'(for debugging) and 'benchmark'(to measure performance) gems for execution. And 'Rspec' for testing. So if your system doesn't have those gem please install before execution.
+Successfully execute code on ruby 2.6.2. It requires 'pry'(for debugging) gem and 'benchmark'(to measure performance) for execution. And 'Rspec' for testing. So if your system doesn't have those gem please install before execution.
 
 * To install pry
 ```sh
 gem install pry
 ```
-* To install benchmark
-```sh
-gem install benchmark
-``` 
  * To install RSpec
  ```sh
  gem install rspec
